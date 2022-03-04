@@ -4,6 +4,10 @@ from sys import exit
 
 pygame.init()
 
+file1 = open("output.txt","w+")
+file1.readline()
+
+
 screen = pygame.display.set_mode((640, 480), 0, 32)
 
 # Creates images with smooth gradients
@@ -54,6 +58,9 @@ while True:
 
     for event in pygame.event.get():
         if event.type == QUIT:
+            file1.write(output_color)
+            file1.close()
+
             pygame.quit()
             exit()
 
@@ -79,11 +86,20 @@ while True:
         pygame.draw.circle(screen, (255, 255, 255), pos, 20)
 
     # Color calculation
-    color_a = color
+    color_a = tuple(color) #Pode dar erro aqui
     color_b = invert_color(color_a)
     color_1 = color_lerp(color_a, color_b, 0.25)
     color_2 = color_lerp(color_a, color_b, 0.50)
     color_3 = color_lerp(color_a, color_b, 0.75)
+
+
+    col_a = str(color_a)
+    col_b = str(color_1)
+    col_c = str(color_2)
+    col_d = str(color_3)
+    col_e = str(color_b)
+
+    output_color = col_a+'\n'+col_b+'\n'+col_c+'\n'+col_d+'\n'+col_e
 
     # Main section - Selected Color and it's inverse
     pygame.draw.rect(screen, tuple(color_a), (0, 240, 320, 180))
