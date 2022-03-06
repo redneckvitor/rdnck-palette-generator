@@ -2,11 +2,12 @@ import pygame
 from pygame.locals import *
 from sys import exit
 
+from color_processing import *
+
 pygame.init()
 
 file1 = open("output.txt","w+")
 file1.readline()
-
 
 screen = pygame.display.set_mode((640, 480), 0, 32)
 
@@ -29,27 +30,6 @@ def create_scales(height):
     return red_scale_surface, green_scale_surface, blue_scale_surface
 
 
-def invert_color(color):
-    red, green, blue = color
-    red = 255 - red
-    green = 255 - green
-    blue = 255 - blue
-
-    return int(red), int(green), int(blue)
-
-
-def color_lerp(color1, color2, factor): # L = v1+(v2-v1)*f
-
-    red1, green1, blue1 = color1
-    red2, green2, blue2 = color2
-
-    red = red1 + (red2 - red1) * factor
-    green = green1 + (green2 - green1) * factor
-    blue = blue1 + (blue2 - blue1) * factor
-
-    return int(red), int(green), int(blue)
-
-
 red_scale, green_scale, blue_scale = create_scales(80)
 
 color = [127, 127, 127]
@@ -63,6 +43,12 @@ while True:
 
             pygame.quit()
             exit()
+
+        if event.type == KEYDOWN:
+            if event.key == K_s:
+                file1.write(output_color)
+                file1.close()
+
 
     screen.fill((0, 0, 0))
 
@@ -86,30 +72,29 @@ while True:
         pygame.draw.circle(screen, (255, 255, 255), pos, 20)
 
     # Color calculation
-    color_a = tuple(color) #Pode dar erro aqui
-    color_b = invert_color(color_a)
-    color_1 = color_lerp(color_a, color_b, 0.25)
-    color_2 = color_lerp(color_a, color_b, 0.50)
-    color_3 = color_lerp(color_a, color_b, 0.75)
+    color_a = tuple(color)
+    color_e = invert_color(color_a)
+    color_b = color_lerp(color_a, color_e, 0.25)
+    color_c = color_lerp(color_a, color_e, 0.50)
+    color_d = color_lerp(color_a, color_e, 0.75)
 
-
-    col_a = str(color_a)
-    col_b = str(color_1)
-    col_c = str(color_2)
-    col_d = str(color_3)
-    col_e = str(color_b)
+    col_a = rgb_to_hex(color_a)
+    col_b = rgb_to_hex(color_b)
+    col_c = rgb_to_hex(color_c)
+    col_d = rgb_to_hex(color_d)
+    col_e = rgb_to_hex(color_e)
 
     output_color = col_a+'\n'+col_b+'\n'+col_c+'\n'+col_d+'\n'+col_e
 
-    # Main section - Selected Color and it's inverse
+    # Main section - Draw selected color and it's inverse
     pygame.draw.rect(screen, tuple(color_a), (0, 240, 320, 180))
-    pygame.draw.rect(screen, tuple(color_b), (320, 240, 320, 180))
+    pygame.draw.rect(screen, tuple(color_e), (320, 240, 320, 180))
 
-    # lower section - Color Palette
+    # lower section - Draw color palette
     pygame.draw.rect(screen, tuple(color_a), (0, 430, 128, 50))
-    pygame.draw.rect(screen, tuple(color_1), (128, 430, 128, 50))
-    pygame.draw.rect(screen, tuple(color_2), (128*2, 430, 128, 50))
-    pygame.draw.rect(screen, tuple(color_3), (128*3, 430, 128, 50))
-    pygame.draw.rect(screen, tuple(color_b), (128*4, 430, 128, 50))
+    pygame.draw.rect(screen, tuple(color_b), (128, 430, 128, 50))
+    pygame.draw.rect(screen, tuple(color_c), (128*2, 430, 128, 50))
+    pygame.draw.rect(screen, tuple(color_d), (128*3, 430, 128, 50))
+    pygame.draw.rect(screen, tuple(color_e), (128*4, 430, 128, 50))
 
     pygame.display.update()
